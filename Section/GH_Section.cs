@@ -48,6 +48,8 @@ namespace DSUtilities.Section
             pManager.AddNumberParameter("MomentInertia2", "I2", "Moment of inertia around axis 2", GH_ParamAccess.item);
             pManager.AddBrepParameter("Geometry", "Geo", "Final geometry of section", GH_ParamAccess.list);
             pManager.AddLineParameter("BoundingBox", "BB", "Bounding box of section", GH_ParamAccess.list);
+
+            pManager.HideParameter(5);
         }
 
         /// <summary>
@@ -70,7 +72,14 @@ namespace DSUtilities.Section
 
             //go/no-go
             if (!Analysis.ValidCheck(solids)) return;
-            if (!Analysis.ValidCheck(voids)) return;
+
+            if (voids.Count != 0)
+            {
+                if (!Analysis.ValidCheck(voids)) return;
+                if (!Analysis.SolidVoidCheck(solids, voids, plane)) return;
+            }
+
+            
 
             //solve
             Analysis.AnalysisPlane refplane = (Analysis.AnalysisPlane)plane;

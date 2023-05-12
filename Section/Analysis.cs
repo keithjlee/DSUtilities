@@ -35,6 +35,52 @@ namespace DSUtilities.Section
             return true; //else return true
         }
 
+        public static bool SolidVoidCheck(List<Curve> positives, List<Curve> negatives, int plane)
+        {
+            Plane worldplane;
+            if (plane == 0)
+            {
+                worldplane = Plane.WorldXY;
+            }
+            else if (plane == 1)
+            {
+                worldplane = Plane.WorldYZ;
+            }
+            else
+            {
+                worldplane = Plane.WorldZX;
+            }
+
+            foreach (Curve negative in negatives)
+            {
+
+                bool check = false;
+
+                foreach (Curve positive in positives)
+                {
+                    var res = (int)Curve.PlanarClosedCurveRelationship(negative, positive, worldplane, tol);
+
+                    if (res == 1 || res == 3)
+                    {
+                        return false;
+                    }
+
+                    if (res == 2)
+                    {
+                        check = true;
+                    }
+                }
+    
+                if (!check)
+                {
+                    return false;
+                }
+
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Computes the total area of an arbitrary section
         /// </summary>
@@ -83,16 +129,27 @@ namespace DSUtilities.Section
             XZ
         }
 
+        public static Plane APtoWorld(AnalysisPlane plane)
+        {
+            switch(plane)
+            {
+                case AnalysisPlane.XY: return Plane.WorldXY;
+                case AnalysisPlane.YZ: return Plane.WorldYZ;
+                case AnalysisPlane.XZ: return Plane.WorldZX;
+                default: return Plane.WorldXY;
+            }
+        }
 
-        public static int StrongDir(Analysis.AnalysisPlane plane)
+
+        public static int StrongDir(AnalysisPlane plane)
         {
             switch (plane)
             {
-                case Analysis.AnalysisPlane.XY:
+                case AnalysisPlane.XY:
                     return 1;
-                case Analysis.AnalysisPlane.YZ:
+                case AnalysisPlane.YZ:
                     return 2;
-                case Analysis.AnalysisPlane. XZ:
+                case AnalysisPlane. XZ:
                     return 2;
                 default: return 1;
             }

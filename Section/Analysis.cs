@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ namespace DSUtilities.Section
 {
     internal static class Analysis
     {
+        public static double tol = 1e-2;
+
         /// <summary>
         /// Checks if sections are closed and planar
         /// </summary>
@@ -50,29 +53,64 @@ namespace DSUtilities.Section
             return Atotal;
         }
 
+        /// <summary>
+        /// Get the bounding box of a collection of curves
+        /// </summary>
+        /// <param name="curves"></param>
+        /// <returns></returns>
         public static BoundingBox GetBB(List<Curve> curves)
         {
-            BoundingBox bb = new BoundingBox();
+            BoundingBox bb = curves[0].GetBoundingBox(true);
 
-            for (int i = 0; i <= curves.Count; i++)
+            if (curves.Count > 1)
             {
-                bb.Union(curves[i].GetBoundingBox(true));
+                for (int i = 1; i < curves.Count; i++)
+                {
+                    bb.Union(curves[i].GetBoundingBox(true));
+                }
             }
 
             return bb;
         }
 
-        public static List<double> SectionModulii(Point3d Centroid, BoundingBox bb)
+        /// <summary>
+        /// Reference planes of analysis: first letter is the "Strong" axis (assumed horizontal)
+        /// </summary>
+        public enum AnalysisPlane
         {
-            List<double> S = new List<double>();
-            // X axis bending
-            var vxtop = bb.Corner(true, false, false) - Centroid;
-            var dxtop = Math.Sqrt(Math.Pow(vxtop.Y, 2) + Math.Pow(vxtop.Z, 2));
-            S.Add(dxtop);
-
-            var vxbot = bb.Corner(true, false, true) - Centroid;
-            var dxbot = Math.Sqrt(Math.Pow(vxbot.Y, 2) + Math.Pow(vxbot.Z, 2));
-            S.Add(dxbot);
+            XY,
+            YZ,
+            XZ
         }
+
+
+        public static int StrongDir(Analysis.AnalysisPlane plane)
+        {
+            switch (plane)
+            {
+                case Analysis.AnalysisPlane.XY:
+                    return 1;
+                case Analysis.AnalysisPlane.YZ:
+                    return 2;
+                case Analysis.AnalysisPlane. XZ:
+                    return 2;
+                default: return 1;
+            }
+        }
+
+        public static int WeakDir(Analysis.AnalysisPlane plane)
+        {
+            switch (plane)
+            {
+                case Analysis.AnalysisPlane.XY:
+                    return 0;
+                case Analysis.AnalysisPlane.YZ:
+                    return 1;
+                case Analysis.AnalysisPlane.XZ:
+                    return 0;
+                default: return 0;
+            }
+        }
+
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Rhino.Geometry;
 using MathNet.Numerics;
+using Rhino.Collections;
 
 namespace DSUtilities.Section
 {
@@ -22,7 +23,7 @@ namespace DSUtilities.Section
         public double E = 1;
         public List<Curve> Solids;
         public List<Curve> Voids;
-        public List<Curve> Geometry;
+        public List<Brep> Geometry;
 
         public Section()
         {
@@ -112,26 +113,47 @@ namespace DSUtilities.Section
             
         }
 
+        //private void GetBreps(List<Curve> solids, List<Curve> voids)
+        //{
+        //    Geometry = new List<Curve>();
+        //    foreach (Curve solid in solids)
+        //    {
+        //        Curve[] diffs = Curve.CreateBooleanDifference(solid, voids, Analysis.tol);
+
+        //        if (diffs.Length > 0)
+        //        {
+        //            foreach(Curve diff in diffs)
+        //            {
+        //                Geometry.Add(diff);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            Geometry.Add(solid);
+        //        }
+        //    }
+        //}
+
         private void GetBreps(List<Curve> solids, List<Curve> voids)
         {
-            Geometry = new List<Curve>();
-            foreach (Curve solid in solids)
-            {
-                Curve[] diffs = Curve.CreateBooleanDifference(solid, voids, Analysis.tol);
+            var solidbreps = Brep.CreatePlanarBreps(new CurveList(solids), Analysis.tol).ToList();
 
-                if (diffs.Length > 0)
-                {
-                    foreach(Curve diff in diffs)
-                    {
-                        Geometry.Add(diff);
-                    }
-                }
-                else
-                {
-                    Geometry.Add(solid);
-                }
+            if (voids.Count == 0)
+            {
+                //Geometry = new List<Brep>();
+                //foreach (Curve solid in solids)
+                //{
+                //    Geometry.Add(Brep.TryConvertBrep(solid));
+                //}
+
+                Geometry = solidbreps;
+            }
+            else
+            {
+                var voidbreps = Brep.CreatePlanarBreps(new CurveList(voids), Analysis.tol).ToList();
+
+                Geometry = Brep.CreateBooleanDifference(solidbreps, voidbreps, Analysis.tol, true).ToList();
             }
         }
-
     }
 }

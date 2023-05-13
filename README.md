@@ -18,7 +18,7 @@ Generate a control surface of $u\times v$ points, automatically generate sliders
 ### ControlSurfacePoint
 Same thing but for points
 
-![](assets/gifs/CtrlSurfPoint.gif
+![](assets/gifs/CtrlSurfPoint.gif)
 
 ## Section
 Tools for defining arbitrarily complex cross sections and extracting useful information them. Drawn sections must be parallel to the global XYZ planes, and assumes the following:

@@ -17,8 +17,6 @@ namespace DSUtilities.Section
         public double Sstrong2;
         public double Sweak1;
         public double Sweak2;
-        //public double Zstrong;
-        //public double Zweak;
         public double H;
         public double W;
 

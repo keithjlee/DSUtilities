@@ -362,6 +362,8 @@ namespace DSUtilities.Parameterization
             }
         }
 
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.ctrlsurfP;
+
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>

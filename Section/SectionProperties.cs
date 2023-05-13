@@ -57,106 +57,106 @@ namespace DSUtilities.Section
             Sweak2 = Iweak / y2;
         }
 
-        private void GetZ(Section section, double tol, int maxiter)
-        {
-            //section modulus
-            int iDistStrong = Analysis.StrongDir(section.Plane);
-            int iDistWeak = Analysis.WeakDir(section.Plane);
+        //private void GetZ(Section section, double tol, int maxiter)
+        //{
+        //    //section modulus
+        //    int iDistStrong = Analysis.StrongDir(section.Plane);
+        //    int iDistWeak = Analysis.WeakDir(section.Plane);
 
-            double Atarget = Area / 2;
-            Plane refplane = Analysis.APtoWorld((int)section.Plane);
-            Vector3d vec = Analysis.UnitVector(section.Plane);
+        //    double Atarget = Area / 2;
+        //    Plane refplane = Analysis.APtoWorld((int)section.Plane);
+        //    Vector3d vec = Analysis.UnitVector(section.Plane);
 
-            Point3d startpoint = section.Corners[0];
-            Point3d endpoint = section.Corners[1];
+        //    Point3d startpoint = section.Corners[0];
+        //    Point3d endpoint = section.Corners[1];
 
-            //strong axis analysis
-            double dupper = H;
-            double dlower = 0;
-            double area = 0;
-            double err = Math.Abs(Atarget - area) / Atarget;
-            double dstrong = (dupper + dlower) / 2;
-            int iter = 1;
+        //    //strong axis analysis
+        //    double dupper = H;
+        //    double dlower = 0;
+        //    double area = 0;
+        //    double err = Math.Abs(Atarget - area) / Atarget;
+        //    double dstrong = (dupper + dlower) / 2;
+        //    int iter = 1;
 
-            Rectangle3d intersector = new Rectangle3d(refplane, startpoint, endpoint - dstrong * vec);
+        //    Rectangle3d intersector = new Rectangle3d(refplane, startpoint, endpoint - dstrong * vec);
 
-            while (iter <= maxiter || err > tol)
+        //    while (iter <= maxiter || err > tol)
 
-            {
-                area = Analysis.GetArea(section, intersector.ToNurbsCurve());
+        //    {
+        //        area = Analysis.GetArea(section, intersector.ToNurbsCurve());
 
-                double diff = Atarget - area;
+        //        double diff = Atarget - area;
 
-                err = Math.Abs(diff) / Atarget;
+        //        err = Math.Abs(diff) / Atarget;
 
-                if (diff > 0)
-                {
-                    dlower = dstrong;
-                }
-                else
-                {
-                    dupper = dstrong;
-                }
+        //        if (diff > 0)
+        //        {
+        //            dlower = dstrong;
+        //        }
+        //        else
+        //        {
+        //            dupper = dstrong;
+        //        }
 
-                dstrong = (dupper + dlower) / 2;
+        //        dstrong = (dupper + dlower) / 2;
 
-                intersector = new Rectangle3d(refplane, startpoint, endpoint - dstrong * vec);
+        //        intersector = new Rectangle3d(refplane, startpoint, endpoint - dstrong * vec);
 
-                iter++;
-            }
+        //        iter++;
+        //    }
 
-            Point3d cstrong1 = Analysis.GetOverlapCentroid(section, intersector.ToNurbsCurve());
+        //    Point3d cstrong1 = Analysis.GetOverlapCentroid(section, intersector.ToNurbsCurve());
 
-            Rectangle3d offsetrect = new Rectangle3d(refplane, startpoint - vec * dstrong, section.Corners[3]);
+        //    Rectangle3d offsetrect = new Rectangle3d(refplane, startpoint - vec * dstrong, section.Corners[3]);
 
-            Point3d cstrong2 = Analysis.GetOverlapCentroid(section, offsetrect.ToNurbsCurve());
+        //    Point3d cstrong2 = Analysis.GetOverlapCentroid(section, offsetrect.ToNurbsCurve());
 
-            Zstrong = area * (Math.Abs(cstrong1[iDistStrong] - dstrong) + Math.Abs(cstrong2[iDistStrong] - dstrong));
+        //    Zstrong = area * (Math.Abs(cstrong1[iDistStrong] - dstrong) + Math.Abs(cstrong2[iDistStrong] - dstrong));
 
-            //weak axis
-            dupper = W;
-            dlower = 0;
-            area = 0;
-            err = Math.Abs(Atarget - area) / Atarget;
-            double dweak = (dupper + dlower) / 2;
-            iter = 1;
-            vec = Analysis.UnitVectorWidth(section.Plane);
-            endpoint = section.Corners[2];
-            intersector = new Rectangle3d(refplane, startpoint, endpoint + dweak * vec);
+        //    //weak axis
+        //    dupper = W;
+        //    dlower = 0;
+        //    area = 0;
+        //    err = Math.Abs(Atarget - area) / Atarget;
+        //    double dweak = (dupper + dlower) / 2;
+        //    iter = 1;
+        //    vec = Analysis.UnitVectorWidth(section.Plane);
+        //    endpoint = section.Corners[2];
+        //    intersector = new Rectangle3d(refplane, startpoint, endpoint + dweak * vec);
 
-            while (iter <= maxiter || err > tol)
+        //    while (iter <= maxiter || err > tol)
 
-            {
-                area = Analysis.GetArea(section, intersector.ToNurbsCurve());
+        //    {
+        //        area = Analysis.GetArea(section, intersector.ToNurbsCurve());
 
-                double diff = Atarget - area;
+        //        double diff = Atarget - area;
 
-                err = Math.Abs(diff) / Atarget;
+        //        err = Math.Abs(diff) / Atarget;
 
-                if (diff > 0)
-                {
-                    dlower = dweak;
-                }
-                else
-                {
-                    dupper = dweak;
-                }
+        //        if (diff > 0)
+        //        {
+        //            dlower = dweak;
+        //        }
+        //        else
+        //        {
+        //            dupper = dweak;
+        //        }
 
-                dweak = (dupper + dlower) / 2;
+        //        dweak = (dupper + dlower) / 2;
 
-                intersector = new Rectangle3d(refplane, startpoint, endpoint + dweak * vec);
+        //        intersector = new Rectangle3d(refplane, startpoint, endpoint + dweak * vec);
 
-                iter++;
-            }
+        //        iter++;
+        //    }
 
-            Point3d cweak1 = Analysis.GetOverlapCentroid(section, intersector.ToNurbsCurve());
+        //    Point3d cweak1 = Analysis.GetOverlapCentroid(section, intersector.ToNurbsCurve());
 
-            offsetrect = new Rectangle3d(refplane, startpoint + vec * dweak, section.Corners[3]);
+        //    offsetrect = new Rectangle3d(refplane, startpoint + vec * dweak, section.Corners[3]);
 
-            Point3d cweak2 = Analysis.GetOverlapCentroid(section, offsetrect.ToNurbsCurve());
+        //    Point3d cweak2 = Analysis.GetOverlapCentroid(section, offsetrect.ToNurbsCurve());
 
-            Zweak = area * (Math.Abs(cweak1[iDistWeak] - dweak) + Math.Abs(cweak2[iDistWeak] - dweak));
+        //    Zweak = area * (Math.Abs(cweak1[iDistWeak] - dweak) + Math.Abs(cweak2[iDistWeak] - dweak));
 
-        }
+        //}
     }
 }

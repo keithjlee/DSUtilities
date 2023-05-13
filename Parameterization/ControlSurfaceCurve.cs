@@ -269,10 +269,11 @@ namespace DSUtilities.Parameterization
         private void GetBB()
         {
             bb = new BoundingBox();
+            bb = curves[0].GetBoundingBox(true);
 
-            foreach (Curve curve in curves)
+            for (int i = 1; i < curves.Count; i++)
             {
-                bb.Union(curve.GetBoundingBox(true));
+                bb.Union(curves[i].GetBoundingBox(true));
             }
 
             //get total height of geometry
@@ -365,6 +366,8 @@ namespace DSUtilities.Parameterization
                 values.Add(val);
             }
         }
+
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.ctrlsurfE;
 
 
         /// <summary>

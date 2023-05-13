@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DSUtilities.Section
 {
-    internal static class Analysis
+    public static class Analysis
     {
         public static double tol = 1e-2;
 
@@ -180,6 +180,20 @@ namespace DSUtilities.Section
             }
         }
 
+        public static List<Point3d> CornerPoints(BoundingBox bb, AnalysisPlane plane)
+        {
+            switch (plane)
+            {
+                case AnalysisPlane.XY:
+                    return new List<Point3d> { bb.Corner(true, false, true), bb.Corner(false, false, true), bb.Corner(true, true, true), bb.Corner(false, true, true) };
+                case AnalysisPlane.YZ:
+                    return new List<Point3d> { bb.Corner(true, true, false), bb.Corner(true, false, false), bb.Corner(true, true, true), bb.Corner(true, false, true) };
+                case AnalysisPlane.XZ:
+                    return new List<Point3d> { bb.Corner(true, true, false), bb.Corner(false, true, false), bb.Corner(true, true, true), bb.Corner(false, true, true) };
+                default: return new List<Point3d> { bb.Corner(true, false, true), bb.Corner(false, false, true), bb.Corner(true, true, true), bb.Corner(false, true, true) };
+            }
+        }
+
         public static Vector3d UnitVector(AnalysisPlane plane)
         {
             switch (plane)
@@ -192,6 +206,21 @@ namespace DSUtilities.Section
                     return new Vector3d(0, 0, 1);
                 default:
                     return new Vector3d(0, 1, 0);
+            }
+        }
+
+        public static Vector3d UnitVectorWidth(AnalysisPlane plane)
+        {
+            switch (plane)
+            {
+                case AnalysisPlane.XY:
+                    return new Vector3d(1, 0, 0);
+                case AnalysisPlane.YZ:
+                    return new Vector3d(0, 1, 0);
+                case AnalysisPlane.XZ:
+                    return new Vector3d(1, 0, 0);
+                default:
+                    return new Vector3d(1, 0, 0);
             }
         }
 
@@ -255,6 +284,48 @@ namespace DSUtilities.Section
 
             return GetArea(section, region);
 
+        }
+
+        public static Point3d GetOverlapCentroid(Section section, Curve intersector)
+        {
+            double area = 0;
+            Point3d centroid = new Point3d(0,0,0);
+
+            foreach (Curve curve in section.Solids)
+            {
+                Curve[] intersects = Curve.CreateBooleanIntersection(curve, intersector, tol);
+
+                if (intersects.Length > 0)
+                {
+                    foreach (Curve inter in intersects)
+                    {
+                        var amp = AreaMassProperties.Compute(inter);
+                        area += amp.Area;
+                        centroid += amp.Centroid * amp.Area;
+                    }
+                }
+            }
+
+            if (section.Voids.Count > 0)
+            {
+                foreach (Curve curve in section.Voids)
+                {
+                    Curve[] intersects = Curve.CreateBooleanIntersection(curve, intersector, Analysis.tol);
+
+                    if (intersects.Length > 0)
+                    {
+                        foreach (Curve inter in intersects)
+                        {
+                            var amp = AreaMassProperties.Compute(inter);
+                            area -= amp.Area;
+                            centroid += -amp.Centroid * amp.Area;
+                        }
+                    }
+
+                }
+            }
+
+            return centroid / area;
         }
 
     }

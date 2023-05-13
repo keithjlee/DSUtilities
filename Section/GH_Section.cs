@@ -43,13 +43,14 @@ namespace DSUtilities.Section
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Section", "Section", "A cross section", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Area", "A", "Area of section", GH_ParamAccess.item);
             pManager.AddPointParameter("Centroid", "Centroid", "Centroid of section", GH_ParamAccess.item);
             pManager.AddNumberParameter("MomentInertia1", "I1", "Moment of inertia around axis 1", GH_ParamAccess.item);
             pManager.AddNumberParameter("MomentInertia2", "I2", "Moment of inertia around axis 2", GH_ParamAccess.item);
             pManager.AddBrepParameter("Geometry", "Geo", "Final geometry of section", GH_ParamAccess.list);
             pManager.AddLineParameter("BoundingBox", "BB", "Bounding box of section", GH_ParamAccess.list);
 
-            pManager.HideParameter(5);
+            pManager.HideParameter(6);
         }
 
         /// <summary>
@@ -86,11 +87,12 @@ namespace DSUtilities.Section
             Section section = new Section(solids, voids, E, refplane);
 
             DA.SetData(0, section);
-            DA.SetData(1, section.Centroid);
-            DA.SetData(2, section.Istrong);
-            DA.SetData(3, section.Iweak);
-            DA.SetDataList(4, section.Geometry);
-            DA.SetDataList(5, section.BoundingBox.GetEdges());
+            DA.SetData(1, section.Area);
+            DA.SetData(2, section.Centroid);
+            DA.SetData(3, section.Istrong);
+            DA.SetData(4, section.Iweak);
+            DA.SetDataList(5, section.Geometry);
+            DA.SetDataList(6, section.BoundingBox.GetEdges());
         }
 
         /// <summary>

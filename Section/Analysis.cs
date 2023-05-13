@@ -37,19 +37,8 @@ namespace DSUtilities.Section
 
         public static bool SolidVoidCheck(List<Curve> positives, List<Curve> negatives, int plane)
         {
-            Plane worldplane;
-            if (plane == 0)
-            {
-                worldplane = Plane.WorldXY;
-            }
-            else if (plane == 1)
-            {
-                worldplane = Plane.WorldYZ;
-            }
-            else
-            {
-                worldplane = Plane.WorldZX;
-            }
+
+            Plane worldplane = APtoWorld(plane);
 
             foreach (Curve negative in negatives)
             {
@@ -129,14 +118,19 @@ namespace DSUtilities.Section
             XZ
         }
 
-        public static Plane APtoWorld(AnalysisPlane plane)
+        public static Plane APtoWorld(int plane)
         {
-            switch(plane)
+            if (plane == 0)
             {
-                case AnalysisPlane.XY: return Plane.WorldXY;
-                case AnalysisPlane.YZ: return Plane.WorldYZ;
-                case AnalysisPlane.XZ: return Plane.WorldZX;
-                default: return Plane.WorldXY;
+                return Plane.WorldXY;
+            }
+            else if (plane == 1)
+            {
+                return Plane.WorldYZ;
+            }
+            else
+            {
+                return Plane.WorldZX;
             }
         }
 
@@ -167,6 +161,100 @@ namespace DSUtilities.Section
                     return 0;
                 default: return 0;
             }
+        }
+
+        public static List<Point3d> CornerPoints(AbstractSection section)
+        {
+            AnalysisPlane plane = section.Plane;
+            BoundingBox bb = section.BoundingBox;
+
+            switch(plane)
+            {
+                case AnalysisPlane.XY:
+                    return new List<Point3d> {bb.Corner(true, false, true), bb.Corner(false, false, true), bb.Corner(true, true, true), bb.Corner(false, true, true)};
+                case AnalysisPlane.YZ:
+                    return new List<Point3d> {bb.Corner(true, true, false), bb.Corner(true, false, false), bb.Corner(true, true, true), bb.Corner(true, false, true) };
+                case AnalysisPlane.XZ:
+                    return new List<Point3d> { bb.Corner(true, true, false), bb.Corner(false, true, false), bb.Corner(true, true, true), bb.Corner(false, true, true) };
+                default: return new List<Point3d> { bb.Corner(true, false, true), bb.Corner(false, false, true), bb.Corner(true, true, true), bb.Corner(false, true, true) };
+            }
+        }
+
+        public static Vector3d UnitVector(AnalysisPlane plane)
+        {
+            switch (plane)
+            {
+                case AnalysisPlane.XY:
+                    return new Vector3d(0, 1, 0);
+                case AnalysisPlane.YZ:
+                    return new Vector3d(0, 0, 1);
+                case AnalysisPlane.XZ:
+                    return new Vector3d(0, 0, 1);
+                default:
+                    return new Vector3d(0, 1, 0);
+            }
+        }
+
+        public static double GetArea(Section section, Curve intersector)
+        {
+            double area = 0;
+
+            foreach (Curve curve in section.Solids)
+            {
+                Curve[] intersects = Curve.CreateBooleanIntersection(curve, intersector, tol);
+
+                if (intersects.Length > 0)
+                {
+                    foreach (Curve inter in intersects)
+                    {
+                        area += AreaMassProperties.Compute(inter).Area;
+                    }
+                }
+            }
+
+            if (section.Voids.Count > 0)
+            {
+                foreach (Curve curve in section.Voids)
+                {
+                    Curve[] intersects = Curve.CreateBooleanIntersection(curve, intersector, Analysis.tol);
+
+                    if (intersects.Length > 0)
+                    {
+                        foreach (Curve inter in intersects)
+                        {
+                            area -= AreaMassProperties.Compute(inter).Area;
+                        }
+                    }
+
+                }
+            }
+
+            return area;
+        }
+
+
+        public static double OverlapArea(Section section, double depth, int direction)
+        {
+            Vector3d vec = UnitVector(section.Plane);
+            Plane referenceplane = APtoWorld((int)section.Plane);
+            Point3d startpoint;
+            Point3d endpoint;
+            //extract relevant corner points
+            if (direction == -1)
+            {
+                startpoint = section.Corners[0];
+                endpoint = section.Corners[1] - depth * vec;
+            }
+            else
+            {
+                startpoint = section.Corners[2];
+                endpoint = section.Corners[3] + depth * vec;
+            }
+
+            Curve region = new Rectangle3d(referenceplane, startpoint, endpoint).ToNurbsCurve();
+
+            return GetArea(section, region);
+
         }
 
     }

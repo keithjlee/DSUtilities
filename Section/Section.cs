@@ -17,6 +17,7 @@ namespace DSUtilities.Section
         public double Iweak;
         public Analysis.AnalysisPlane Plane;
         public BoundingBox BoundingBox;
+        public List<Point3d> Corners;
     }
     internal class Section: AbstractSection
     {
@@ -85,6 +86,9 @@ namespace DSUtilities.Section
 
             //get bounding box
             this.BoundingBox = Analysis.GetBB(curves);
+
+            //get corners in relevant plane: top left, top right, bottom left,  bottom right
+            this.Corners = Analysis.CornerPoints(this);
 
             //get final geometry
             GetBreps(curves, voids);

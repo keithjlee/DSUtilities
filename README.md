@@ -7,7 +7,15 @@ Automatically detect intersections of curves, shatter at the intersection points
 ![](assets/gifs/Autoshatter.gif)
 
 ### Topologize
-Export the topology of a series of interconnected curves. Goes well with AutoShatter.
+Export the topology of a series of interconnected curves. Goes well with AutoShatter. It takes in a list of curves as the input and automatically detects shared end points. Topologize converts the network into a JSON string with the following keys:
+
+- `X` A list of length *n* that stores the X positions of all unique end points
+- `Y` The Y position of end points
+- `Z` The Z position of end points
+- `Istarts` A list of length *m* of the starting node indices of all curves
+- `Iends` A list of ending node indices
+- `Inodes` An optional parameter that stores the indices of end points that are of interest
+  - EG. If drawing a network to export for structural analysis, it may be useful to quickly mark the points that act as supports. Place a point at these positions and input into the component to extract their index in the XYZ fields.
 
 ## Parameterization
 ### ControlSurfaceCurve

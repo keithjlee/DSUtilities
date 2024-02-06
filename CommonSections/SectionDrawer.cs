@@ -155,8 +155,8 @@ namespace DSUtilities.CommonSections
             Curve outer = new Rectangle3d(plane, corner_outer_1, corner_outer_2).ToNurbsCurve();
             Brep outer_brep = Brep.CreatePlanarBreps(outer, 1e-6)[0];
 
-            Point3d corner_inner_1 = O - X * (b - t) / 2 - Y * (d - t) / 2;
-            Point3d corner_inner_2 = O + X * (b - t) / 2 + Y * (d - t) / 2;
+            Point3d corner_inner_1 = O - X * (b / 2 - t) - Y * (d / 2 - t);
+            Point3d corner_inner_2 = O + X * (b / 2 - t) + Y * (d / 2 - t);
             Curve inner = new Rectangle3d(plane, corner_inner_1, corner_inner_2).ToNurbsCurve();
             Brep inner_brep = Brep.CreatePlanarBreps(inner, 1e-6)[0];
 

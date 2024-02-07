@@ -34,6 +34,7 @@ namespace DSUtilities.CommonSections
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddBrepParameter("Geometry", "Geo", "Geometry of section", GH_ParamAccess.item);
+            pManager.AddPlaneParameter("Plane", "Plane", "Plane of analysis for section", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -52,7 +53,12 @@ namespace DSUtilities.CommonSections
             DA.GetData(2, ref plane);
 
             Brep brep = SectionDrawer.MakeHSSRound(plane, r, t);
+
+            // set output plane
+            Plane outplane = new Plane(AreaMassProperties.Compute(brep).Centroid, plane.XAxis, plane.YAxis);
+
             DA.SetData(0, brep);
+            DA.SetData(1, outplane);
         }
 
         /// <summary>

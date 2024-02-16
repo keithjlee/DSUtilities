@@ -9,14 +9,16 @@ namespace DSUtilities.Asap
 {
     public class Element
     {
-        public Section Section;
-        public Node StartNode;
-        public Node EndNode;
+        public int StartIndex;
+        public int EndIndex;
         public int ElementID;
-        public List<int> GlobalIDs;
-        public List<int> LoadIDs;
+        public Section Section;
         public double Psi;
-        public List<double> LocalForces;
+        public Vector3d XAxis;
+        public Vector3d YAxis;
+        public Vector3d ZAxis;
+        public List<double> Forces;
+        public double AxialForce;
         public string ID;
         public double A => Section.A;
         public double E => Section.E;
@@ -24,8 +26,22 @@ namespace DSUtilities.Asap
         public double Ix => Section.Ix;
         public double Iy => Section.Iy;
         public double J => Section.J;
-        public int Istart => StartNode.NodeID;
-        public int Iend => EndNode.NodeID;
-        public double Length => StartNode.Position.DistanceTo(EndNode.Position);
+
+        public Element() { }
+
+        public Element(int startIndex, int endIndex, int elementID, Section section, double psi, Vector3d xAxis, Vector3d yAxis, Vector3d zAxis, List<double> forces, double axialForce, string iD)
+        {
+            StartIndex = startIndex;
+            EndIndex = endIndex;
+            ElementID = elementID;
+            Section = section;
+            Psi = psi;
+            XAxis = xAxis;
+            YAxis = yAxis;
+            ZAxis = zAxis;
+            Forces = forces;
+            AxialForce = axialForce;
+            ID = iD;
+        }
     }
 }

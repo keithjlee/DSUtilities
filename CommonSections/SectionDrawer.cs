@@ -8,8 +8,20 @@ using Rhino.Geometry;
 
 namespace DSUtilities.CommonSections
 {
+    /// <summary>
+    /// Draw common planar sections.
+    /// </summary>
     internal static class SectionDrawer
     {
+        /// <summary>
+        /// Make a simplified I-beam section
+        /// </summary>
+        /// <param name="plane">Plane of analysis where: (1) plane.Yaxis is the "vertical" direction, (2) section is centered about plane.Origin</param>
+        /// <param name="d">Depth of beam.</param>
+        /// <param name="b">Width of beam.</param>
+        /// <param name="tf">Flange thickness.</param>
+        /// <param name="tw">Web thickness</param>
+        /// <returns></returns>
         public static Curve MakeIBeam(Plane plane, double d, double b, double tf, double tw)
         {
             // extract LCS

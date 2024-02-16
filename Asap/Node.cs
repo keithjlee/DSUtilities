@@ -10,26 +10,30 @@ namespace DSUtilities.Asap
 {
     public class Node
     {
-        public bool IsTruss;
         public Point3d Position;
         public List<bool> DOF;
         public int NodeID;
-        public List<int> GlobalIDs;
-        public List<int> LoadIDs;
-        public List<double> Reactions;
-        public List<double> Displacement;
+        public List<double> Reaction;
+        public Vector3d ForceReaction;
+        public List<double> U;
+        public Vector3d Displacement;
         public string ID;
-        public double X => Position.X;
-        public double Y => Position.Y;
-        public double Z => Position.Z;
 
-        public Node() { }
-        public Node(Point3d position, string id)
+        public Node()
         {
-            Position = position;
-            ID = id;
-            DOF = new List<bool> { true, true, true, true, true, true };
+
         }
 
+        public Node(Point3d position, List<bool> dOF, int nodeID, List<double> reaction, Vector3d forceReaction, List<double> u, Vector3d displacement, string iD)
+        {
+            Position = position;
+            DOF = dOF;
+            NodeID = nodeID;
+            Reaction = reaction;
+            ForceReaction = forceReaction;
+            U = u;
+            Displacement = displacement;
+            ID = iD;
+        }
     }
 }

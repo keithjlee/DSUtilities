@@ -11,7 +11,10 @@ namespace DSUtilities.Asap
     {
         public List<GHnode> nodes {  get; set; }
         public List<GHelement> elements { get; set; }
-        public List<GHload> loads {  get; set; }
+        public List<GHnodeforce> nodeforces {  get; set; }
+        public List<GHnodemoment> nodemoments {  get; set; }
+        public List<GHlineload> lineloads { get; set; }
+        public List<GHpointload> pointloads { get; set; }
         public List<double> x { get; set; }
         public List<double> y { get; set; }
         public List<double> z { get; set; }
@@ -56,7 +59,15 @@ namespace DSUtilities.Asap
                 displacements.Add(disp);
             }
 
-            return new Model(new_nodes, new_elements, new List<GHload>(), positions, displacements, istart, iend, i_free_nodes, i_fixed_nodes);
+            //collect loads
+            List<GHload> loads = new List<GHload>();
+
+            foreach (GHnodeforce load in nodeforces) { loads.Add(load); }
+            foreach (GHnodemoment moment in nodemoments) { loads.Add(moment); }
+            foreach (GHlineload lineload in lineloads) { loads.Add(lineload); }
+            foreach (GHpointload pointload in pointloads) { loads.Add(pointload); }
+
+            return new Model(new_nodes, new_elements, loads, positions, displacements, istart, iend, i_free_nodes, i_fixed_nodes);
     }
     }
 

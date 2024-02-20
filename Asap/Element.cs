@@ -13,6 +13,7 @@ namespace DSUtilities.Asap
         public int EndIndex;
         public int ElementID;
         public Section Section;
+        public List<bool> Release;
         public double Psi;
         public Vector3d XAxis;
         public Vector3d YAxis;
@@ -29,12 +30,13 @@ namespace DSUtilities.Asap
 
         public Element() { }
 
-        public Element(int startIndex, int endIndex, int elementID, Section section, double psi, Vector3d xAxis, Vector3d yAxis, Vector3d zAxis, List<double> forces, double axialForce, string iD)
+        public Element(int startIndex, int endIndex, int elementID, Section section, List<bool> release, double psi, Vector3d xAxis, Vector3d yAxis, Vector3d zAxis, List<double> forces, double axialForce, string iD)
         {
             StartIndex = startIndex;
             EndIndex = endIndex;
             ElementID = elementID;
             Section = section;
+            Release = release;
             Psi = psi;
             XAxis = xAxis;
             YAxis = yAxis;

@@ -8,9 +8,11 @@ namespace DSUtilities.Drawing
 {
     public class Arrows : GH_Component
     {
+
         /// <summary>
         /// Initializes a new instance of the Arrows class.
         /// </summary>
+        /// 
         public Arrows()
           : base("Arrows", "Arrow3D",
               "Draw an arrow based on a curve",
@@ -57,6 +59,9 @@ namespace DSUtilities.Drawing
             if (!DA.GetData(2, ref r_cone)) return;
             if (!DA.GetData(3, ref l_cone)) return;
             DA.GetData(4, ref both);
+
+            //check curve validity
+            if (curve == null || curve.GetLength() <= double.Epsilon) return;
 
             //make pipe
             List<Brep> breps = Brep.CreatePipe(curve, r_pipe, false, PipeCapMode.Flat, true, 1e-5, 1e-5).ToList();

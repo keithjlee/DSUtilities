@@ -13,6 +13,7 @@ namespace DSUtilities.Asap
         public int iEnd { get; set; }
         public int elementID { get; set; }
         public Section section { get; set; }
+        public List<bool> release {  get; set; }
         public double psi {  get; set; }
         public List<double> localx { get; set; }
         public List<double> localy { get; set; }
@@ -25,9 +26,9 @@ namespace DSUtilities.Asap
         {
             Vector3d X = new Vector3d(localx[0], localx[1], localx[2]);
             Vector3d Y = new Vector3d(localy[0], localy[1], localy[2]);
-            Vector3d Z = new Vector3d(localz[0], localz[1], localz[3]);
+            Vector3d Z = new Vector3d(localz[0], localz[1], localz[2]);
 
-            return new Element(iStart, iEnd, elementID, section, psi, X, Y, Z, forces, axialforce, id);
+            return new Element(iStart, iEnd, elementID, section, release, psi, X, Y, Z, forces, axialforce, id);
         }
     }
 }

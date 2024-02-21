@@ -36,5 +36,20 @@ namespace DSUtilities.Asap
             FreeIndices = freeIndices;
             SupportIndices = supportIndices;
         }
+
+        /// <summary>
+        /// Get the global displacement vector U
+        /// </summary>
+        /// <returns></returns>
+        public List<double> GetU()
+        {
+            List<double> U = new List<double>();
+            foreach (Node node in  Nodes)
+            {
+                U.AddRange(node.U);
+            }
+
+            return U;
+        }
     }
 }

@@ -4,17 +4,18 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using DSUtilities.Asap;
+using System.Linq;
 
 namespace DSUtilities.Asap_GH
 {
-    public class DeconstructModel : GH_Component
+    public class CategorizeLoads : GH_Component
     {
         /// <summary>
-        /// Initializes a new instance of the DeconstructModel class.
+        /// Initializes a new instance of the CategorizeLoads class.
         /// </summary>
-        public DeconstructModel()
-          : base("DeconstructModel", "DeconModel",
-              "Deconstruct an Asap model into its constituent parts",
+        public CategorizeLoads()
+          : base("CategorizeLoads", "LoadCats",
+              "Split a collection of loads into load types",
               "DSutilities", "Asap")
         {
         }
@@ -24,7 +25,7 @@ namespace DSUtilities.Asap_GH
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Model", "Model", "Asap model to deconstruct", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Loads", "Loads", "Loads to categorize", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -32,12 +33,10 @@ namespace DSUtilities.Asap_GH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Nodes", "Nodes", "Nodes", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Elements", "Elements", "Elements", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Loads", "Loads", "Loads", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("FreeIndices", "iFree", "Indices of nodes that are fully free to displace", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("FixedIndices", "iFixed", "Indices of nodes that have one or more displacement constraints", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Displacement", "U", "Global displacement vector", GH_ParamAccess.list);
+            pManager.AddGenericParameter("NodeForces", "NodeForce", "Node force loads", GH_ParamAccess.list);
+            pManager.AddGenericParameter("NodeMoments", "NodeMoment", "Node moment loads", GH_ParamAccess.list);
+            pManager.AddGenericParameter("LineLoads", "LineLoad", "Element line loads", GH_ParamAccess.list);
+            pManager.AddGenericParameter("PointLoads", "PointLoad", "Element point loads", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -46,15 +45,18 @@ namespace DSUtilities.Asap_GH
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            Model model = new Model();
-            if (!DA.GetData(0, ref model)) return;
+            List<GHload> loads = new List<GHload>();
+            DA.GetDataList(0, loads);
 
-            DA.SetDataList(0, model.Nodes);
-            DA.SetDataList(1, model.Elements);
-            DA.SetDataList(2, model.Loads);
-            DA.SetDataList(3, model.FreeIndices);
-            DA.SetDataList(4, model.SupportIndices);
-            DA.SetDataList(5, model.GetU());
+            List<GHnodeforce> nodeforces = loads.OfType<GHnodeforce>().ToList();
+            List<GHnodemoment> nodemoments = loads.OfType<GHnodemoment>().ToList();
+            List<GHlineload> lineloads = loads.OfType<GHlineload>().ToList();
+            List<GHpointload> pointloads = loads.OfType<GHpointload>().ToList();
+
+            DA.SetDataList(0, nodeforces);
+            DA.SetDataList(1, nodemoments);
+            DA.SetDataList(2 , lineloads);
+            DA.SetDataList(3 , pointloads);
         }
 
         /// <summary>
@@ -75,7 +77,7 @@ namespace DSUtilities.Asap_GH
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("E38AEA43-26E2-4C47-82F1-21A4AE028640"); }
+            get { return new Guid("6009F735-4997-4B7A-9B05-B1DEC04E6651"); }
         }
     }
 }

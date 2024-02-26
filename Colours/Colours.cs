@@ -15,6 +15,37 @@ namespace DSUtilities.Colours
         public static Color Green = Color.FromArgb(88, 188, 130);
         public static Color Orange = Color.FromArgb(245, 187, 37);
 
+        public static Color MakeBlue(int alpha)
+        {
+            alpha = CheckAlpha(alpha);
+            return Color.FromArgb(alpha, 37, 89, 245);
+        }
+
+        public static Color MakePink(int alpha)
+        {
+            alpha = CheckAlpha(alpha);
+            return Color.FromArgb(alpha, 245, 37, 101);
+        }
+
+        public static Color MakeGreen(int alpha)
+        {
+            alpha = CheckAlpha(alpha);
+            return Color.FromArgb(alpha, 88, 188, 130);
+        }
+
+        public static Color MakeOrange(int alpha)
+        {
+            alpha = CheckAlpha(alpha);
+            return Color.FromArgb(alpha, 245, 187, 37);
+        }
+
+        public static int CheckAlpha(int alpha)
+        {
+            if (alpha < 0) return 0;
+            if (alpha > 255) return 255;
+            return alpha;
+        }
+
         public static List<Color> MakeGradient(List<double> values, double factor, Color min_color, Color max_color, bool center_zero)
         {
             var extremes = GetMinMax(values, center_zero, factor);

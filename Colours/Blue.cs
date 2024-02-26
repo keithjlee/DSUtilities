@@ -23,6 +23,7 @@ namespace DSUtilities.Colours
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+            pManager.AddIntegerParameter("Alpha", "Alpha", "Alpha value of colour [0, 255]", GH_ParamAccess.item, 255);
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace DSUtilities.Colours
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddColourParameter("Blue", "Blue", "#2559F5", GH_ParamAccess.item);
+            pManager.AddColourParameter("Blue", "Blue", "#2559F5, (37, 89, 245)", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -39,7 +40,9 @@ namespace DSUtilities.Colours
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            DA.SetData(0, Colours.Blue);
+            int alpha = 255;
+            DA.GetData(0, ref alpha);
+            DA.SetData(0, Colours.MakeBlue(alpha));
         }
 
         /// <summary>

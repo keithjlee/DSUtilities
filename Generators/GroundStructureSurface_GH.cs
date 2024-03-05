@@ -7,14 +7,14 @@ using Rhino.Geometry;
 
 namespace DSUtilities.Generators
 {
-    public class GroundStructure_GH : GH_Component
+    public class GroundStructureSurface_GH : GH_Component
     {
         /// <summary>
-        /// Initializes a new instance of the GroundStructure_GH class.
+        /// Initializes a new instance of the GroundStructureSurface_GH class.
         /// </summary>
-        public GroundStructure_GH()
-          : base("GroundStructurePlane", "GroundStructPl",
-              "Generate a planar ground structure",
+        public GroundStructureSurface_GH()
+          : base("GroundStructureSurface", "GroundStructSrf",
+              "Generate a ground structure based on the UV frames of a surface",
               "DSutilities", "Generators")
         {
         }
@@ -24,17 +24,16 @@ namespace DSUtilities.Generators
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddPlaneParameter("Plane", "Pl", "Plane of analysis", GH_ParamAccess.item, Plane.WorldXY);
+            pManager.AddSurfaceParameter("Surface", "Srf", "Surface for ground structure", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Nx", "Nx", "Number of nodes in X direction", GH_ParamAccess.item, 10);
-            pManager.AddNumberParameter("Dx", "Dx", "Distance in X direction", GH_ParamAccess.item, 1);
             pManager.AddIntegerParameter("Ny", "Ny", "Number of nodes in Y direction", GH_ParamAccess.item, 10);
-            pManager.AddNumberParameter("Dy", "Dy", "Distance in Y direction", GH_ParamAccess.item, 1);
             pManager.AddIntegerParameter("Type", "Type", "Type of ground structure. 0: grid, 1: x-grid, 2: dense", GH_ParamAccess.item, 0);
 
-            Param_Integer param = pManager[5] as Param_Integer;
+            Param_Integer param = pManager[3] as Param_Integer;
             param.AddNamedValue("Grid", 0);
             param.AddNamedValue("X", 1);
             param.AddNamedValue("Dense", 2);
+
         }
 
         /// <summary>
@@ -59,42 +58,33 @@ namespace DSUtilities.Generators
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            //initialize
-            Plane plane = Plane.WorldXY;
+            Surface surface = null;
             int nx = 10;
-            double dx = 1;
             int ny = 10;
-            double dy = 1;
             int type = 0;
 
-            //populate
-            DA.GetData(0, ref plane);
+            if (!DA.GetData(0, ref surface)) return;
             DA.GetData(1, ref nx);
-            DA.GetData(2, ref dx);
-            DA.GetData(3, ref ny);
-            DA.GetData(4, ref dy);
-            DA.GetData(5, ref type);
-
-            Vector3d u = plane.XAxis;
-            Vector3d v = plane.YAxis;
+            DA.GetData(2, ref ny);
+            DA.GetData(3, ref type);
 
             GroundStructure gs = new GroundStructure();
             if (type == 0)
             {
-                gs = new GridGroundStructure(plane.Origin, plane.XAxis, nx, dx, plane.YAxis, ny, dy);
+                gs = new GridGroundStructure(surface, nx, ny);
             }
             else if (type == 1)
             {
-                gs = new XGroundStructure(plane.Origin, plane.XAxis, nx, dx, plane.YAxis, ny, dy);
+                gs = new XGroundStructure(surface, nx, ny);
             }
             else if (type == 2)
             {
-                gs = new DenseGroundStructure(plane.Origin, plane.XAxis, nx, dx, plane.YAxis, ny, dy);
+                gs = new DenseGroundStructure(surface, nx, ny);
             }
             else
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Type not recognized (can be 0/1/2), defaulted to 0: Grid");
-                gs = new GridGroundStructure(plane.Origin, plane.XAxis, nx, dx, plane.YAxis, ny, dy);
+                gs = new GridGroundStructure(surface, nx, ny);
             }
 
             //indices
@@ -132,7 +122,7 @@ namespace DSUtilities.Generators
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("9BD7F137-BF80-4589-8815-FCA6E4BB25B1"); }
+            get { return new Guid("AEB72EC5-AA73-4CA7-A435-64C003AD0C9C"); }
         }
     }
 }

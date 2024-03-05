@@ -35,5 +35,33 @@ namespace DSUtilities.Generators
             Nodes = points;
             Lines = lines;
         }
+
+        public GridGroundStructure(Surface surface, int nx, int ny)
+        {
+            GroundStructureGeneration.InitializeDomain(surface, nx, ny, out double dx, out double dy);
+
+            //populate
+            Nx = nx;
+            Dx = dx;
+            Ny = ny;
+            Dy = dy;
+
+            List<Point3d> points = GroundStructureGeneration.GetPointGrid(surface, nx, dx, ny, dy, out int[,] igrid, out List<int> _);
+
+            // get X grid lines
+            List<int> istart = new List<int>();
+            List<int> iend = new List<int>();
+            List<Line> lines = new List<Line>();
+
+            // populate with grid
+            GroundStructureGeneration.GetOrthogonals(igrid, nx, ny, points, istart, iend, lines);
+
+            //populate
+            Igrid = igrid;
+            Istart = istart;
+            Iend = iend;
+            Nodes = points;
+            Lines = lines;
+        }
     }
 }

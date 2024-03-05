@@ -36,7 +36,37 @@ namespace DSUtilities.Generators
 
                 for (int j = 0; j < ny; j++)
                 {
-                    Point3d point = origin + u * dx * (i - 1) + v * dy * (j - 1);
+                    Point3d point = origin + u * dx * i + v * dy * j;
+
+                    //populate
+                    points.Add(point);
+                    igrid[i, j] = index;
+                    iflat.Add(index);
+
+                    index++;
+                }
+            }
+
+            return points;
+        }
+
+        public static List<Point3d> GetPointGrid(Surface surface, int nx, double dx, int ny, double dy, out int[,] igrid, out List<int> iflat)
+        {
+            //indexers igrid[i][j] = index of point at dx * (i-1), dy * (j-1)
+            igrid = new int[nx, ny];
+            iflat = new List<int>();
+
+            List<Point3d> points = new List<Point3d>();
+
+
+            //populate points and indices
+            int index = 0;
+            for (int i = 0; i < nx; i++)
+            {
+
+                for (int j = 0; j < ny; j++)
+                {
+                    Point3d point = surface.PointAt(dx * i, dy * j); 
 
                     //populate
                     points.Add(point);
@@ -96,7 +126,7 @@ namespace DSUtilities.Generators
             //vertical lines
             for (int i = 0; i < nx; i++)
             {
-                for (int j = 0; i < ny - 1; j++)
+                for (int j = 0; j < ny - 1; j++)
                 {
                     int i1 = igrid[i, j];
                     int i2 = igrid[i, j + 1];
@@ -192,6 +222,15 @@ namespace DSUtilities.Generators
             }
 
             return indices;
+        }
+
+        public static void InitializeDomain(Surface surf, int nx, int ny, out double dx, out double dy)
+        {
+            Interval d1 = surf.Domain(0);
+            Interval d2 = surf.Domain(1);
+
+            dx = (d1.Max - d1.Min) / (nx - 1);
+            dy = (d2.Max - d2.Min) / (ny - 1);
         }
 
     }

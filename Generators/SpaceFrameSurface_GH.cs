@@ -44,8 +44,8 @@ namespace DSUtilities.Generators
             pManager.AddIntegerParameter("iY2", "iY2", "Indices of second column of perimeter nodes in Y direction", GH_ParamAccess.list);
             pManager.AddIntegerParameter("iInterior", "iInt", "Indices of interior nodes", GH_ParamAccess.list);
             pManager.AddIntegerParameter("iOffset", "iOffset", "Indices of offset plane nodes", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("iChord1", "iBase", "Indices of base plane elements", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("iChord2", "iOffset", "Indices of offset plane elements", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("iChord1", "iChord1", "Indices of base plane elements", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("iChord2", "iChord2", "Indices of offset plane elements", GH_ParamAccess.list);
             pManager.AddIntegerParameter("iWeb", "iWeb", "Indices of web elements", GH_ParamAccess.list);
         }
 

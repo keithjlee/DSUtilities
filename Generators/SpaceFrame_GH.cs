@@ -29,6 +29,9 @@ namespace DSUtilities.Generators
             pManager.AddIntegerParameter("Ny", "Ny", "Number of nodes in Y direction", GH_ParamAccess.item, 10);
             pManager.AddNumberParameter("Dy", "Dy", "Distance in Y direction", GH_ParamAccess.item, 1);
             pManager.AddNumberParameter("Dz", "Dz", "Spaceframe depth", GH_ParamAccess.item, 1);
+            pManager.AddPointParameter("FixPoints", "Pts", "Points where a spaceframe node should exist", GH_ParamAccess.list);
+
+            pManager[6].Optional = true;
         }
 
         /// <summary>
@@ -64,6 +67,7 @@ namespace DSUtilities.Generators
             int ny = 10;
             double dy = 1;
             double dz = 0;
+            List<Point3d> target = new List<Point3d>();
 
             //populate
             DA.GetData(0, ref plane);
@@ -72,8 +76,9 @@ namespace DSUtilities.Generators
             DA.GetData(3, ref ny);
             DA.GetData(4, ref dy);
             DA.GetData(5, ref dz);
+            DA.GetDataList(6, target);
 
-            SpaceFrame sf = new SpaceFrame(plane, nx, dx, ny, dy, dz);
+            SpaceFrame sf = new SpaceFrame(plane, nx, dx, ny, dy, dz, target);
 
             //perimeter nodes of base plane
             GroundStructureGeneration.GetPerimeterIndices(sf.Igrid1, out List<int> ix1, out List<int> ix2, out List<int> iy1, out List<int> iy2);

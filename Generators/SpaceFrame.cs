@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace DSUtilities.Generators
@@ -25,7 +26,7 @@ namespace DSUtilities.Generators
         public List<int> Iweb;
 
 
-        public SpaceFrame(Plane plane, int nx, double dx, int ny, double dy, double dz)
+        public SpaceFrame(Plane plane, int nx, double dx, int ny, double dy, double dz, List<Point3d> targets)
         {
             //Populate
             Nx = nx;
@@ -36,6 +37,9 @@ namespace DSUtilities.Generators
 
             //get nodes
             List<Point3d> points = GetPlanarPointGrid(plane, nx, dx, ny, dy, dz, out int[,] igrid1, out int[,] igrid2);
+
+            //adjust nodes
+            if (targets.Count > 0) AdjustToTargetPoints(points, targets);
 
             //Orthogonal lines
             // get X grid lines
@@ -77,7 +81,7 @@ namespace DSUtilities.Generators
             Iweb = iweb;
         }
 
-        public SpaceFrame(Surface surface, int nx, int ny, double dz)
+        public SpaceFrame(Surface surface, int nx, int ny, double dz, List<Point3d> targets)
         {
             //get domain parameters
             GroundStructureGeneration.InitializeDomain(surface, nx, ny, out double dx, out double dy);
@@ -94,6 +98,9 @@ namespace DSUtilities.Generators
 
             //get points
             List<Point3d> points = GetSurfacePointGrid(surface, offset_surface, nx, dx, ny, dy, out int[,] igrid1, out int[,] igrid2);
+
+            //adjust nodes
+            if (targets.Count > 0) AdjustToTargetPoints(points, targets);
 
             //Orthogonal lines
             // get X grid lines
@@ -133,6 +140,25 @@ namespace DSUtilities.Generators
             Ichord1 = ichord1;
             Ichord2 = ichord2;
             Iweb = iweb;
+
+        }
+
+        /// <summary>
+        /// For each point in target_points, adjust the closest point in initial_points such that they coincide
+        /// </summary>
+        /// <param name="initial_points"></param>
+        /// <param name="target_points"></param>
+        public void AdjustToTargetPoints(List<Point3d> initial_points, List<Point3d> target_points)
+        {
+            Point3dList initial = new Point3dList(initial_points);
+            
+            foreach (Point3d target in target_points)
+            {
+                int index = initial.ClosestIndex(target);
+
+                initial_points[index] = new Point3d(target);
+            }
+
 
         }
 

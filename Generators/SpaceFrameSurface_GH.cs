@@ -27,6 +27,9 @@ namespace DSUtilities.Generators
             pManager.AddIntegerParameter("Nx", "Nx", "Number of nodes in X direction", GH_ParamAccess.item, 10);
             pManager.AddIntegerParameter("Ny", "Ny", "Number of nodes in Y direction", GH_ParamAccess.item, 10);
             pManager.AddNumberParameter("Dz", "Dz", "Surface offset distance (in direction of surface normal)", GH_ParamAccess.item, 1);
+            pManager.AddPointParameter("FixPoints", "Pts", "Points where a spaceframe node should exist", GH_ParamAccess.list);
+
+            pManager[4].Optional = true;
         }
 
         /// <summary>
@@ -59,13 +62,15 @@ namespace DSUtilities.Generators
             int nx = 10;
             int ny = 10;
             double dz = 0;
+            List<Point3d> target = new List<Point3d>();
 
             if (!DA.GetData(0, ref surface)) return;
             DA.GetData(1, ref nx);
             DA.GetData(2, ref ny);
             DA.GetData(3, ref dz);
+            DA.GetDataList(4, target);
 
-            SpaceFrame sf = new SpaceFrame(surface, nx, ny, dz);
+            SpaceFrame sf = new SpaceFrame(surface, nx, ny, dz, target);
 
             //perimeter nodes of base plane
             GroundStructureGeneration.GetPerimeterIndices(sf.Igrid1, out List<int> ix1, out List<int> ix2, out List<int> iy1, out List<int> iy2);

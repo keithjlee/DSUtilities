@@ -25,5 +25,17 @@ namespace DSUtilities.Topology
             Iends = iends;
             Inodes = inodes;
         }
+
+        public List<Point3d> ToPoints()
+        {
+            List<Point3d> points = new List<Point3d>();
+
+            for (int i = 0; i < X.Count; i++)
+            {
+                points.Add(new Point3d(X[i], Y[i], Z[i]));
+            }
+
+            return points;
+        }
     }
 }

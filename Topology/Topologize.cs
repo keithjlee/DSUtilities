@@ -42,7 +42,7 @@ namespace DSUtilities.Topology
             pManager.AddPointParameter("Nodes", "Nodes", "Nodes of interest", GH_ParamAccess.list);
             pManager.AddNumberParameter("Scale", "Scale", "Scale factor for distance between nodes", GH_ParamAccess.item, 1.0);
             pManager.AddNumberParameter("Tolerance", "Tol", "Search tolerance for shared nodes", GH_ParamAccess.item, 0.1);
-            pManager.AddBooleanParameter("OneBased", "OneBased", "One based indexing?", GH_ParamAccess.item, true);
+            pManager.AddBooleanParameter("OneBased", "OneBased", "One based indexing?", GH_ParamAccess.item, false);
 
             pManager[1].Optional = true;
         }
@@ -52,6 +52,9 @@ namespace DSUtilities.Topology
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
+            pManager.AddPointParameter("Points", "Points", "Vertices of topology.", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("StartIndices", "iStart", "Start indices of edges.", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("EndIndices", "iEnd", "End indices of edges.", GH_ParamAccess.list);
             pManager.AddTextParameter("Topology", "Topology", "Topology of curves represented as a text JSON", GH_ParamAccess.item);
         }
 
@@ -66,7 +69,7 @@ namespace DSUtilities.Topology
             List<Point3d> nodes = new List<Point3d>();
             double scale = 1.0;
             double tol = 1.0;
-            bool indexoffset = true;
+            bool indexoffset = false;
 
             if (!DA.GetDataList(0, curves)) return;
             
@@ -94,7 +97,12 @@ namespace DSUtilities.Topology
 
             var serialized = JsonConvert.SerializeObject(topobj);
 
-            DA.SetData(0, serialized);
+            List<Point3d> points = topobj.ToPoints();
+
+            DA.SetDataList(0, points);
+            DA.SetDataList(1, Istarts);
+            DA.SetDataList(2, Iends);
+            DA.SetData(3, serialized);
         }
 
         private bool WithinTolerance(Point3dList points, Point3d point, double tolerance)
